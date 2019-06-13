@@ -1,8 +1,6 @@
 package chenyang.search;
 
 import chenyang.auxiliary.StdIn;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BST<Key extends Comparable<Key>, Value> {
 	private Node root;
@@ -63,13 +61,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 	}
 	
 	
-//	private Node min(Node x) {
-//		return (x.left == null)? x : min(x.left);
-//	}
-//	
-//	public Key min() {
-//		return min(root).key;
-//	}
+
 //	
 //	private Node floor(Node x, Key key) {
 //		if (x == null) {return null;}
@@ -107,52 +99,52 @@ public class BST<Key extends Comparable<Key>, Value> {
 //		return rank(key, root);
 //	}
 //	
-//	private Node deleteMin(Node x) {
-//		if (x.left == null) {return x.right;}
-//		x.left = deleteMin(x.left);
-//		x.N = size(x.left) + size(x.right) + 1;
-//		return x;
-//	}
-//	
-//	public void deleteMin() {
-//		root = deleteMin(root);
-//	}
-//	
-//	private Node delete(Node x, Key key) {
-//		if (x == null) {return null;}
-//		int cmp = key.compareTo(x.key);
-//		if (cmp < 0) {x.left = delete(x.left, key);}
-//		else if (cmp > 0) {x.right = delete(x.right, key);}
-//		else {
-//			if (x.right == null) {return x.left;}
-//			if (x.left == null) {return x.right;}
-//			Node t = x;
-//			x = min(t.right);
-//			x.right = deleteMin(t.right);
-//			x.left = t.left;
-//		}
-//		x.N = size(x.left) + size(x.right) + 1;
-//		return x;
-//	}
-//	
-//	public void delete(Key key) {
-//		root = delete(root, key);
-//	}
+	private Node min(Node x) {
+		return (x.left == null)? x : min(x.left);
+	}
+	
+	public Key min() {
+		return min(root).key;
+	}
+	
+	private Node deleteMin(Node x) {
+		if (x.left == null) {return x.right;}
+		x.left = deleteMin(x.left);
+		x.N = size(x.left) + size(x.right) + 1;
+		return x;
+	}
+	
+	public void deleteMin() {
+		root = deleteMin(root);
+	}
+	
+	private Node delete(Node x, Key key) {
+		if (x == null) {return null;}
+		int cmp = key.compareTo(x.key);
+		if (cmp < 0) {x.left = delete(x.left, key);}
+		else if (cmp > 0) {x.right = delete(x.right, key);}
+		else {
+			if (x.right == null) {return x.left;}
+			if (x.left == null) {return x.right;}
+			Node t = x;
+			x = min(t.right);
+			x.right = deleteMin(t.right);
+			x.left = t.left;
+		}
+		x.N = size(x.left) + size(x.right) + 1;
+		return x;
+	}
+	
+	public void delete(Key key) {
+		root = delete(root, key);
+	}
     public static void main(String[] args) { 
         BST<String, Integer> st = new BST<String, Integer>();
         for (int i = 0; i < 12; i++) {
             String key = StdIn.readString();
             st.put(key, i);
         }
-        
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-			String json = mapper.writeValueAsString(st);
-			System.out.println(json);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 //        for (String s : st.levelOrder())
 //            StdOut.print(s + ":" + st.get(s) + " || ");
 //
