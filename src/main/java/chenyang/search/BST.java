@@ -1,5 +1,6 @@
 package chenyang.search;
 
+import chenyang.auxiliary.In;
 import chenyang.auxiliary.StdIn;
 
 public class BST<Key extends Comparable<Key>, Value> {
@@ -8,7 +9,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 	private class Node{
 		private Key key;
 		private Value val;
-		private Node left, right;
+		private Node left, right, parent;
 		private int N;
 		
 		public Node(Key key, Value val, int N) {
@@ -44,6 +45,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 	
 	public void put(Key key, Value val) {
 		root = put(root, key, val);
+		root.parent = null;
 	}
 	
 	private Node put(Node x, Key key, Value val) {
@@ -52,8 +54,14 @@ public class BST<Key extends Comparable<Key>, Value> {
 		}
 		
 		int cmp = key.compareTo(x.key);
-		if (cmp < 0) {x.left = put(x.left, key, val);}
-		else if (cmp > 0) {x.right = put (x.right, key, val);}
+		if (cmp < 0) {
+			x.left = put(x.left, key, val);
+			x.left.parent = x;
+		}
+		else if (cmp > 0) {
+			x.right = put (x.right, key, val);
+			x.right.parent = x;
+		}
 		else x.val = val;
 		
 		x.N = size(x.left) + size(x.right) + 1;
@@ -110,6 +118,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 	private Node deleteMin(Node x) {
 		if (x.left == null) {return x.right;}
 		x.left = deleteMin(x.left);
+		x.left.parent = x;
 		x.N = size(x.left) + size(x.right) + 1;
 		return x;
 	}
@@ -121,8 +130,14 @@ public class BST<Key extends Comparable<Key>, Value> {
 	private Node delete(Node x, Key key) {
 		if (x == null) {return null;}
 		int cmp = key.compareTo(x.key);
-		if (cmp < 0) {x.left = delete(x.left, key);}
-		else if (cmp > 0) {x.right = delete(x.right, key);}
+		if (cmp < 0) {
+			x.left = delete(x.left, key);
+			x.left.parent = x;
+		}
+		else if (cmp > 0) {
+			x.right = delete(x.right, key);
+			x.right.parent = x;
+		}
 		else {
 			if (x.right == null) {return x.left;}
 			if (x.left == null) {return x.right;}
@@ -130,6 +145,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 			x = min(t.right);
 			x.right = deleteMin(t.right);
 			x.left = t.left;
+			x.right.parent = x.left.parent = x;
 		}
 		x.N = size(x.left) + size(x.right) + 1;
 		return x;
@@ -137,13 +153,17 @@ public class BST<Key extends Comparable<Key>, Value> {
 	
 	public void delete(Key key) {
 		root = delete(root, key);
+		root.parent = null;
 	}
     public static void main(String[] args) { 
         BST<String, Integer> st = new BST<String, Integer>();
-        for (int i = 0; i < 12; i++) {
-            String key = StdIn.readString();
+        In input = new In(args[0]);
+        for (int i = 0; !input.isEmpty(); i++) {
+            String key = input.readString();
             st.put(key, i);
         }
+        
+        st.delete("E");
 
 //        for (String s : st.levelOrder())
 //            StdOut.print(s + ":" + st.get(s) + " || ");
