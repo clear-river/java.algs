@@ -28,20 +28,18 @@ public class BST<Key extends Comparable<Key>, Value> {
 		return x.N;
 	}
 	
-//	public Value get(Key key) {
-//		return get(root, key);
-//	}
-//	
-//	private Value get(Node x, Key key) {
-//		if (x == null) {
-//			return null;
-//		}
-//		int cmp = key.compareTo(x.key);
-//		if (cmp == 0) {
-//			return x.val;
-//		}
-//		return (cmp < 0) ? get(x.left, key) : get(x.right, key);
-//	}
+	public Value get(Key key) {
+		return get(root, key).val;
+	}
+	
+	private Node get(Node x, Key key) {
+		while (x != null) {
+			int cmp = key.compareTo(x.key);
+			if (cmp == 0) { return x; }
+			x = (cmp < 0) ? x.left : x.right;
+		}
+		return null;
+	}
 	
 	public void put(Key key, Value val) {
 		root = put(root, key, val);
@@ -68,47 +66,12 @@ public class BST<Key extends Comparable<Key>, Value> {
 		return x;
 	}
 	
-	
-
-//	
-//	private Node floor(Node x, Key key) {
-//		if (x == null) {return null;}
-//		int cmp = key.compareTo(x.key);
-//		if (cmp == 0) {return x;}
-//		if (cmp < 0) {return floor(x.left, key);}
-//		Node t = floor(x.right, key);
-//		return (t != null) ? t : x;
-//	}
-//	
-//	public Key floor(Key key) {
-//		Node x = floor(root, key);
-//		return (x == null) ? null : x.key;
-//	}
-//	
-//	private Node select(Node x, int k) {
-//		if (x == null) {return null;}
-//		int t = size(x.left);
-//		if (t == k) {return x;}
-//		return (t > k) ? select(x.left, k) : select(x.right, k-t-1);
-//	}
-//	
-//	public Key select(int k) {
-//		return select(root, k).key;
-//	}
-//	
-//	private int rank(Key key, Node x) {
-//		if (x == null) {return 0;}
-//		int cmp = key.compareTo(x.key);
-//		if (cmp == 0) {return size(x.left);}
-//		return (cmp < 0) ? rank(key, x.left) : 1+size(x.left)+rank(key, x.right);
-//	}
-//	
-//	public int rank(Key key) {
-//		return rank(key, root);
-//	}
-//	
 	private Node min(Node x) {
-		return (x.left == null)? x : min(x.left);
+		if (x == null) {return x;}
+		while (x.left != null) {
+			x = x.left;
+		}
+		return x;
 	}
 	
 	public Key min() {
