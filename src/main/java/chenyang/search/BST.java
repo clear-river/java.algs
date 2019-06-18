@@ -4,7 +4,7 @@ import chenyang.auxiliary.In;
 import chenyang.auxiliary.StdIn;
 
 public class BST<Key extends Comparable<Key>, Value> {
-	private Node root;
+	private Node root = null;
 	
 	private class Node{
 		private Key key;
@@ -45,29 +45,38 @@ public class BST<Key extends Comparable<Key>, Value> {
 		return null;
 	}
 	
-	public void put(Key key, Value val) {
-		root = put(root, key, val);
-		root.parent = null;
-	}
-	
-	private Node put(Node x, Key key, Value val) {
-		if (x == null) {
-			return new Node(key, val, 1);
+	public void insert(Key key, Value val) {
+		Node current = root, prt = null;
+		int cmp = -1;
+		while (current != null) {
+			cmp = key.compareTo(current.key);
+			if (cmp == 0) {
+				current.val = val;
+				return;
+			}
+			prt = current;
+			current = (cmp < 0) ? current.left : current.right;
 		}
 		
-		int cmp = key.compareTo(x.key);
+		Node n = new Node(key, val, 1);
+		if (prt == null) {
+			root = n;
+			return;
+		}
+		
+		n.parent = prt;
 		if (cmp < 0) {
-			x.left = put(x.left, key, val);
-			x.left.parent = x;
+			prt.left = n;
+		}else {
+			prt.right = n;
 		}
-		else if (cmp > 0) {
-			x.right = put (x.right, key, val);
-			x.right.parent = x;
-		}
-		else x.val = val;
 		
-		x.N = size(x.left) + size(x.right) + 1;
-		return x;
+		while (prt != null) {
+			prt.N ++;
+			prt = prt.parent;
+		}
+		
+		return;
 	}
 	
 	private Node min(Node x) {
@@ -140,10 +149,10 @@ public class BST<Key extends Comparable<Key>, Value> {
         In input = new In(args[0]);
         for (int i = 0; !input.isEmpty(); i++) {
             String key = input.readString();
-            st.put(key, i);
+            st.insert(key, i);
         }
         
-        BST.Node test = st.successor(st.getNode("C"));
+        st.successor(st.root);
         //st.delete("E");
 
 //        for (String s : st.levelOrder())
