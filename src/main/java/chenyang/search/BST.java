@@ -32,6 +32,10 @@ public class BST<Key extends Comparable<Key>, Value> {
 		return get(root, key).val;
 	}
 	
+	public Node getNode(Key key) {
+		return get(root, key);
+	}
+	
 	private Node get(Node x, Key key) {
 		while (x != null) {
 			int cmp = key.compareTo(x.key);
@@ -76,6 +80,19 @@ public class BST<Key extends Comparable<Key>, Value> {
 	
 	public Key min() {
 		return min(root).key;
+	}
+	
+	private Node successor (Node x) {
+		if (x == null) {return null;}
+		if (x.right != null) {
+			return min(x.right);
+		}
+		Node prt = x.parent;
+		while (prt != null && prt.right == x) {
+			x = prt;
+			prt = x.parent;
+		}
+		return prt;
 	}
 	
 	private Node deleteMin(Node x) {
@@ -126,7 +143,8 @@ public class BST<Key extends Comparable<Key>, Value> {
             st.put(key, i);
         }
         
-        st.delete("E");
+        BST.Node test = st.successor(st.getNode("C"));
+        //st.delete("E");
 
 //        for (String s : st.levelOrder())
 //            StdOut.print(s + ":" + st.get(s) + " || ");
