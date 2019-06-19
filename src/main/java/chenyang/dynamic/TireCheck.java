@@ -53,7 +53,7 @@ public class TireCheck {
 	
 	public void init() {
 		plan_dict = new HashMap<Long, CheckPlan>();
-		plan_part = new Queue<CheckPlan>();
+		plan_part = new LinkedList<CheckPlan>();
 		available_steps = new PlanStep[8];
 		//TODO: fill up test data...
 	}
@@ -62,9 +62,12 @@ public class TireCheck {
 		CheckPlan plan = new CheckPlan();
 		plan.steps = new LinkedList<Integer>();
 		plan_part.add(plan);
+		plan_dict.put(0L, plan);
 		
 		while(!plan_part.isEmpty()) {
-			plan = plan_part.poll();
+			Long plan_key = plan_part.poll().plan_key;
+			plan = plan_dict.get(plan_key);
+			
 			for (int i = 0; i < available_steps.length; i++) {
 				CheckPlan next_plan = plan.add_step(i);
 				if (next_plan == null) { continue; }
@@ -82,6 +85,7 @@ public class TireCheck {
 					plan_part.add(next_plan);
 				}
 			}
+			
 			plan_dict.remove(plan.plan_key);
 		}
 		
