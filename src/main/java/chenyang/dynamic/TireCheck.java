@@ -99,7 +99,12 @@ public class TireCheck {
 		TireCheck test = new TireCheck();
 		test.init();
 		TireCheck.CheckPlan plan = test.create_plan();
-		System.out.println(plan.max_pressure);
+		System.out.println("max pressure:" + plan.max_pressure);
+		System.out.print("step sequence:");
+		for (Integer s: plan.steps) {
+			System.out.print(s + "->");
+		}
+		System.out.println("end");
 	}
 }
 
