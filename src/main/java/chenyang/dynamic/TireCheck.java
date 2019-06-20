@@ -72,7 +72,7 @@ public class TireCheck {
 			Long plan_key = (Long) plan_dict.keySet().toArray()[0];
 			plan = plan_dict.get(plan_key);
 			
-			if (plan_key == 7) { break; } //All 3 steps were adopted already.
+			if (plan.steps.size() == available_steps.length) { break; } //All steps were adopted already.
 			
 			for (int i = 0; i < available_steps.length; i++) {
 				CheckPlan next_plan = plan.add_step(i);
@@ -92,7 +92,7 @@ public class TireCheck {
 		}
 		
 		assert(plan_dict.size() == 1);
-		return (CheckPlan) plan_dict.values().toArray()[0];
+		return plan;
 	}
 	
 	public static void main(String[] args) {
