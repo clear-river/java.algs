@@ -116,34 +116,40 @@ public class BST<Key extends Comparable<Key>, Value> {
 		root = deleteMin(root);
 	}
 	
-	private Node delete(Node x, Key key) {
-		if (x == null) {return null;}
-		int cmp = key.compareTo(x.key);
-		if (cmp < 0) {
-			x.left = delete(x.left, key);
-			x.left.parent = x;
+	private void delete(Node x) {
+		if (x == null) {return;}
+		Node node2del = x, child = null;
+		if (x.left != null && x.right != null) {
+			node2del = successor(x);
 		}
-		else if (cmp > 0) {
-			x.right = delete(x.right, key);
-			x.right.parent = x;
+		child = (node2del.left == null) ? node2del.right : node2del.left;
+		if (node2del.parent == null) {
+			root = child;
+		}else {
+			if (node2del == node2del.parent.left) {
+				node2del.parent.left = child;
+			}else {
+				node2del.parent.right = child;
+			}
 		}
-		else {
-			if (x.right == null) {return x.left;}
-			if (x.left == null) {return x.right;}
-			Node t = x;
-			x = min(t.right);
-			x.right = deleteMin(t.right);
-			x.left = t.left;
-			x.right.parent = x.left.parent = x;
+		if (child != null) {
+			child.parent = node2del.parent;
 		}
-		x.N = size(x.left) + size(x.right) + 1;
-		return x;
+		if (node2del != x) {
+			x.key = node2del.key;
+			x.val = node2del.val;
+		}
+		
+		Node prt = node2del.parent;
+		for (;prt != null; prt = prt.parent) {
+			prt.N = size(prt.left) + size(prt.right) + 1;
+		}
 	}
 	
 	public void delete(Key key) {
-		root = delete(root, key);
-		root.parent = null;
+		delete(getNode(key));
 	}
+	
     public static void main(String[] args) { 
         BST<String, Integer> st = new BST<String, Integer>();
         In input = new In(args[0]);
