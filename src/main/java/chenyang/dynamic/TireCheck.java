@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+//题目: 有n个轮胎检测步骤, 每个步骤有轮胎增加数值和轮胎减压数值. 要求找到一个步骤的排列(即一个检测计划), 
+//能够达到最大的胎压, 整个过程中最大胎压不得大于100, 不得小于0.
+
 public class TireCheck {
 	//使用位运算，根据已经包含的步骤计算一个key。这样所有包含相同步骤的plans（尽管排序不同）将会
 	//得到相同的key。使用这个key来map所有这些plan中max_pressure最大的可行plan。
@@ -23,10 +26,12 @@ public class TireCheck {
 				return null;
 			}
 			
+			//任何时候最大胎压不能超过100
 			if (result_pressure + available_steps[step_index].pres_inc > 100) {
 				return null;
 			}
 			
+			//任何时候最小胎压不能低于0
 			if (result_pressure + available_steps[step_index].pres_inc - 
 					available_steps[step_index].pres_dec < 0) {
 				return null;
