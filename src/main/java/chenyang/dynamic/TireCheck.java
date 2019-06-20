@@ -8,7 +8,7 @@ public class TireCheck {
 	//使用位运算，根据已经包含的步骤计算一个key。这样所有包含相同步骤的plans（尽管排序不同）将会
 	//得到相同的key。使用这个key来map所有这些plan中max_pressure最大的可行plan。
 	private HashMap<Long, CheckPlan> plan_dict;
-	//private Queue<CheckPlan> plan_part;
+	// private Queue<CheckPlan> plan_part;
 	private PlanStep[] available_steps;
 	
 	private class CheckPlan{
@@ -42,6 +42,8 @@ public class TireCheck {
 			
 			if (result_pressure + available_steps[step_index].pres_inc > max_pressure) {
 				new_plan.max_pressure = result_pressure + available_steps[step_index].pres_inc;
+			}else {
+				new_plan.max_pressure = max_pressure;
 			}
 			
 			new_plan.result_pressure = result_pressure + available_steps[step_index].pres_inc -
@@ -53,7 +55,7 @@ public class TireCheck {
 	
 	public void init() {
 		plan_dict = new HashMap<Long, CheckPlan>();
-		//plan_part = new LinkedList<CheckPlan>();
+		// plan_part = new LinkedList<CheckPlan>();
 		available_steps = new PlanStep[3];
 		available_steps[0] = new PlanStep(99, 94); //5
 		available_steps[1] = new PlanStep(5, 10);
