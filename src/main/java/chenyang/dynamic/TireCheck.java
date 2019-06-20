@@ -38,7 +38,7 @@ public class TireCheck {
 			new_plan.steps.addAll(steps);
 			new_plan.steps.add(step_index);
 			
-			new_plan.plan_key = plan_key + (1 << step_index);
+			new_plan.plan_key = plan_key | (1 << step_index);
 			
 			if (result_pressure + available_steps[step_index].pres_inc > max_pressure) {
 				new_plan.max_pressure = result_pressure + available_steps[step_index].pres_inc;
