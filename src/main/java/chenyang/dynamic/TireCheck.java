@@ -8,7 +8,7 @@ public class TireCheck {
 	//使用位运算，根据已经包含的步骤计算一个key。这样所有包含相同步骤的plans（尽管排序不同）将会
 	//得到相同的key。使用这个key来map所有这些plan中max_pressure最大的可行plan。
 	private HashMap<Long, CheckPlan> plan_dict;
-	private Queue<CheckPlan> plan_part;
+	//private Queue<CheckPlan> plan_part;
 	private PlanStep[] available_steps;
 	
 	private class CheckPlan{
@@ -53,20 +53,24 @@ public class TireCheck {
 	
 	public void init() {
 		plan_dict = new HashMap<Long, CheckPlan>();
-		plan_part = new LinkedList<CheckPlan>();
-		available_steps = new PlanStep[8];
-		//TODO: fill up test data...
+		//plan_part = new LinkedList<CheckPlan>();
+		available_steps = new PlanStep[3];
+		available_steps[0] = new PlanStep(99, 94); //5
+		available_steps[1] = new PlanStep(5, 10);
+		available_steps[2] = new PlanStep(10, 5);
 	}
 	
 	public CheckPlan create_plan() {
 		CheckPlan plan = new CheckPlan();
 		plan.steps = new LinkedList<Integer>();
-		plan_part.add(plan);
+		//plan_part.add(plan);
 		plan_dict.put(0L, plan);
 		
-		while(!plan_part.isEmpty()) {
-			Long plan_key = plan_part.poll().plan_key;
+		while(!plan_dict.isEmpty()) {
+			Long plan_key = (Long) plan_dict.keySet().toArray()[0];
 			plan = plan_dict.get(plan_key);
+			
+			if (plan_key == 7) { break; } //All 3 steps were adopted already.
 			
 			for (int i = 0; i < available_steps.length; i++) {
 				CheckPlan next_plan = plan.add_step(i);
@@ -80,10 +84,6 @@ public class TireCheck {
 				}else {
 					plan_dict.put(next_plan.plan_key, next_plan);
 				}
-				
-				if (next_plan.steps.size() != available_steps.length) {
-					plan_part.add(next_plan);
-				}
 			}
 			
 			plan_dict.remove(plan.plan_key);
@@ -91,10 +91,22 @@ public class TireCheck {
 		
 		assert(plan_dict.size() == 1);
 		return (CheckPlan) plan_dict.values().toArray()[0];
-	}	
+	}
+	
+	public static void main(String[] args) {
+		TireCheck test = new TireCheck();
+		test.init();
+		TireCheck.CheckPlan plan = test.create_plan();
+		System.out.println(plan.max_pressure);
+	}
 }
 
 class PlanStep{
 	int pres_inc;
 	int pres_dec;
+	
+	public PlanStep(int inc, int dec) {
+		pres_inc = inc;
+		pres_dec = dec;
+	}
 }
