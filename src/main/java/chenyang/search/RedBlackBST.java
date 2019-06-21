@@ -3,20 +3,30 @@ package chenyang.search;
 import chenyang.auxiliary.In;
 import chenyang.auxiliary.StdIn;
 
-public class BST<Key extends Comparable<Key>, Value> {
+public class RedBlackBST<Key extends Comparable<Key>, Value> {
+	private static final boolean RED = true;
+	private static final boolean BLACK = false;
+	
 	private Node root = null;
 	
 	private class Node{
 		private Key key;
 		private Value val;
 		private Node left, right, parent;
+		private boolean color;
 		private int N;
 		
-		public Node(Key key, Value val, int N) {
+		public Node(Key key, Value val, boolean color) {
 			this.key = key;
 			this.val = val;
-			this.N = N;
+			this.N = 1;
+			this.color = color;
 		}
+	}
+	
+	private boolean color(Node x) {
+		if (x == null) {return BLACK;}
+		return x.color;
 	}
 	
 	public int size() {
@@ -58,7 +68,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 			current = (cmp < 0) ? current.left : current.right;
 		}
 		
-		Node n = new Node(key, val, 1);
+		Node n = new Node(key, val, BLACK);
 		if (prt == null) {
 			root = n;
 			return;
@@ -150,8 +160,45 @@ public class BST<Key extends Comparable<Key>, Value> {
 		delete(getNode(key));
 	}
 	
+	private void left_rotate(Node x) {
+		Node rch = x.right;
+		x.right = rch.left;
+		if (rch.left != null) {
+			rch.left.parent = x;
+		}
+		rch.parent = x.parent;
+		if (x.parent == null) {
+			root = rch;
+		}else if(x == x.parent.left) {
+			x.parent.left = rch;
+		}else {
+			x.parent.right = rch;
+		}
+		
+		x.parent = rch;
+		rch.left = x;
+	}
+	
+	private void right_rotate(Node x) {
+		Node lch = x.left;
+		x.left = lch.right;
+		if (lch.right != null) {
+			lch.right.parent = x;
+		}
+		lch.parent = x.parent;
+		if (x.parent == null) {
+			root = lch;
+		}else if(x == x.parent.left) {
+			x.parent.left = lch;
+		}else {
+			x.parent.right = lch;
+		}
+		lch.right = x;
+		x.parent = lch;
+	}
+	
     public static void main(String[] args) { 
-        BST<String, Integer> st = new BST<String, Integer>();
+        RedBlackBST<String, Integer> st = new RedBlackBST<String, Integer>();
         In input = new In(args[0]);
         for (int i = 0; !input.isEmpty(); i++) {
             String key = input.readString();
