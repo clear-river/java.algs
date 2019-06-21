@@ -160,6 +160,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 		delete(getNode(key));
 	}
 	
+	//TODO: left and right rotational methods need to take care of node count N.
 	private void left_rotate(Node x) {
 		Node rch = x.right;
 		x.right = rch.left;
@@ -204,8 +205,9 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
             String key = input.readString();
             st.insert(key, i);
         }
-        
-        st.successor(st.root);
+        RedBlackBST<String, Integer>.Node n = st.getNode("H");
+        st.left_rotate(n);
+        st.right_rotate(st.root);
         //st.delete("E");
 
 //        for (String s : st.levelOrder())
