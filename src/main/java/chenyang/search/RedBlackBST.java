@@ -68,7 +68,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 			current = (cmp < 0) ? current.left : current.right;
 		}
 		
-		Node n = new Node(key, val, BLACK);
+		Node n = new Node(key, val, RED);
 		if (prt == null) {
 			root = n;
 			return;
@@ -86,6 +86,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 			prt = prt.parent;
 		}
 		
+		insert_fixup(n);
 		return;
 	}
 	
@@ -199,6 +200,44 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 		x.parent = lch;
 		x.N = size(x.left) + size(x.right) + 1;
 		lch.N = size(lch.left) + size(lch.right) + 1;
+	}
+	
+	private void insert_fixup(Node n) {
+		Node uncle = null;
+		while (color(n.parent) == RED) {
+			if (n.parent == n.parent.parent.left) {
+				uncle = n.parent.parent.right;
+				if (color(uncle) == RED) {
+					uncle.color = n.parent.color = BLACK;
+					n.parent.parent.color = RED;
+					n = n.parent.parent;
+					continue;
+				}
+				if (n == n.parent.right) {
+					n = n.parent;
+					left_rotate(n);
+				}
+				n.parent.color = BLACK;
+				n.parent.parent.color = RED;
+				right_rotate(n.parent.parent);
+			} else {
+				uncle = n.parent.parent.left;
+				if (color(uncle) == RED) {
+					uncle.color = n.parent.color = BLACK;
+					n.parent.parent.color = RED;
+					n = n.parent.parent;
+					continue;
+				}
+				if (n == n.parent.left) {
+					n = n.parent;
+					right_rotate(n);
+				}
+				n.parent.color = BLACK;
+				n.parent.parent.color = RED;
+				left_rotate(n.parent.parent);
+			}
+		}
+		root.color = BLACK;
 	}
 	
     public static void main(String[] args) { 
