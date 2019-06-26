@@ -71,6 +71,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 		Node n = new Node(key, val, RED);
 		if (prt == null) {
 			root = n;
+			insert_fixup(n);
 			return;
 		}
 		
@@ -204,6 +205,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	
 	private void insert_fixup(Node n) {
 		Node uncle = null;
+		System.out.println("fixing up node" + n.key);
 		while (color(n.parent) == RED) {
 			if (n.parent == n.parent.parent.left) {
 				uncle = n.parent.parent.right;
@@ -247,9 +249,9 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
             String key = input.readString();
             st.insert(key, i);
         }
-        RedBlackBST<String, Integer>.Node n = st.getNode("H");
-        st.left_rotate(n);
-        st.right_rotate(st.root);
+//        RedBlackBST<String, Integer>.Node n = st.getNode("H");
+//        st.left_rotate(n);
+//        st.right_rotate(st.root);
         //st.delete("E");
 
 //        for (String s : st.levelOrder())
