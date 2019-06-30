@@ -194,9 +194,32 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 				break;
 			}else {
 				//Symmetric with node being left child of its parent.
-				
+				bro = node.parent.left;
+				if (color(bro) == RED) {
+					bro.color = BLACK;
+					node.parent.color = RED;
+					right_rotate(node.parent);
+					bro = node.parent.left;
+				}
+				if (color(bro.left) == BLACK && color(bro.right) == BLACK) {
+					bro.color = RED;
+					node = node.parent;
+					continue;
+				}
+				if (color(bro.left) == BLACK) {
+					bro.right.color = BLACK;
+					bro.color = RED;
+					left_rotate(bro);
+					bro = node.parent.left;
+				}
+				bro.color = color(node.parent);
+				node.parent.color = bro.left.color = BLACK;
+				right_rotate(node.parent);
+				node = root;
+				break;
 			}
 		}
+		node.color = BLACK;
 	}
 	
 	public void delete(Key key) {
