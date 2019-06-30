@@ -152,9 +152,50 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 			x.val = node2del.val;
 		}
 		
-		Node prt = node2del.parent;
-		for (;prt != null; prt = prt.parent) {
+		for (Node prt = node2del.parent; prt != null; prt = prt.parent) {
 			prt.N = size(prt.left) + size(prt.right) + 1;
+		}
+		
+		if (color(node2del) == BLACK) {
+			delete_fixup(child);
+		}
+	}
+	
+	private void delete_fixup(Node node) {
+		Node bro = null;
+		while (node != root && color(node) == BLACK) {
+			if (node == node.parent.left) {
+				bro = node.parent.right;
+				// Case 1: brother.color if red.
+				if (color(bro) == RED) {
+					bro.color = BLACK;
+					node.parent.color = RED;
+					left_rotate(node.parent);
+					bro = node.parent.right;
+				}
+				// Case 2: brother.color is black, and color of both its children is BLACK.
+				if (color(bro.left) == BLACK && color(bro.right) == BLACK) {
+					bro.color = RED;
+					node = node.parent;
+					continue;
+				}
+				//Case 3: brother.color is BLACK w/ left child red and right black.
+				if (color(bro.right) == BLACK) {
+					bro.left.color = BLACK;
+					bro.color = RED;
+					right_rotate(bro);
+					bro = node.parent.right;
+				}
+				//Case 4: brother.color is BLACK with right child RED.
+				bro.color = color(node.parent);
+				node.parent.color = bro.right.color = BLACK;
+				left_rotate(node.parent);
+				node = root;
+				break;
+			}else {
+				//Symmetric with node being left child of its parent.
+				
+			}
 		}
 	}
 	
