@@ -1,13 +1,16 @@
 package chenyang.search;
 
+import java.util.LinkedList;
+
 import chenyang.auxiliary.In;
-import chenyang.auxiliary.StdIn;
 
 public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	private static final boolean RED = true;
 	private static final boolean BLACK = false;
 	
-	private Node root = null;
+	private Node nil = new Node(null, null, BLACK, 0);
+	private Node root = nil;
+	
 	
 	private class Node{
 		private Key key;
@@ -16,10 +19,10 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 		private boolean color;
 		private int N;
 		
-		public Node(Key key, Value val, boolean color) {
+		public Node(Key key, Value val, boolean color, Integer size) {
 			this.key = key;
 			this.val = val;
-			this.N = 1;
+			this.N = size;
 			this.color = color;
 		}
 	}
@@ -47,7 +50,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	}
 	
 	private Node get(Node x, Key key) {
-		while (x != null) {
+		while (x != null && x != nil) {
 			int cmp = key.compareTo(x.key);
 			if (cmp == 0) { return x; }
 			x = (cmp < 0) ? x.left : x.right;
@@ -56,9 +59,9 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	}
 	
 	public void insert(Key key, Value val) {
-		Node current = root, prt = null;
+		Node current = root, prt = nil;
 		int cmp = -1;
-		while (current != null) {
+		while (current != nil) {
 			cmp = key.compareTo(current.key);
 			if (cmp == 0) {
 				current.val = val;
@@ -68,9 +71,11 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 			current = (cmp < 0) ? current.left : current.right;
 		}
 		
-		Node n = new Node(key, val, RED);
-		if (prt == null) {
-			root = n;
+		Node n = new Node(key, val, RED, 1);
+		n.left = n.right = nil;
+		
+		if (prt == nil) {
+			root = n; root.parent = nil;
 			insert_fixup(n);
 			return;
 		}
@@ -82,7 +87,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 			prt.right = n;
 		}
 		
-		while (prt != null) {
+		while (prt != nil) {
 			prt.N ++;
 			prt = prt.parent;
 		}
@@ -92,8 +97,8 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	}
 	
 	private Node min(Node x) {
-		if (x == null) {return x;}
-		while (x.left != null) {
+		if (x == null || x == nil) {return null;}
+		while (x.left != nil) {
 			x = x.left;
 		}
 		return x;
@@ -104,20 +109,21 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	}
 	
 	private Node successor (Node x) {
-		if (x == null) {return null;}
-		if (x.right != null) {
+		if (x == null || x == nil) {return null;}
+		if (x.right != nil) {
 			return min(x.right);
 		}
 		Node prt = x.parent;
-		while (prt != null && prt.right == x) {
+		while (prt != nil && prt.right == x) {
 			x = prt;
 			prt = x.parent;
 		}
-		return prt;
+		return (prt == nil)? null : prt;
 	}
 	
+	//TODO: adapt to nil ended cases.
 	private Node deleteMin(Node x) {
-		if (x.left == null) {return x.right;}
+		if (x.left == nil) {return x.right;}
 		x.left = deleteMin(x.left);
 		x.left.parent = x;
 		x.N = size(x.left) + size(x.right) + 1;
@@ -129,13 +135,15 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	}
 	
 	private void delete(Node x) {
-		if (x == null) {return;}
-		Node node2del = x, child = null;
-		if (x.left != null && x.right != null) {
+		if (x == nil || x == null) {return;}
+		System.out.println("To delete node " + x.key);
+		Node node2del = x, child = nil;
+		
+		if (x.left != nil && x.right != nil) {
 			node2del = successor(x);
 		}
-		child = (node2del.left == null) ? node2del.right : node2del.left;
-		if (node2del.parent == null) {
+		child = (node2del.left == nil) ? node2del.right : node2del.left;
+		if (node2del.parent == nil) {
 			root = child;
 		}else {
 			if (node2del == node2del.parent.left) {
@@ -144,15 +152,15 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 				node2del.parent.right = child;
 			}
 		}
-		if (child != null) {
-			child.parent = node2del.parent;
-		}
+
+		child.parent = node2del.parent;
+
 		if (node2del != x) {
 			x.key = node2del.key;
 			x.val = node2del.val;
 		}
 		
-		for (Node prt = node2del.parent; prt != null; prt = prt.parent) {
+		for (Node prt = node2del.parent; prt != nil; prt = prt.parent) {
 			prt.N = size(prt.left) + size(prt.right) + 1;
 		}
 		
@@ -162,7 +170,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	}
 	
 	private void delete_fixup(Node node) {
-		Node bro = null;
+		Node bro = nil;
 		while (node != root && color(node) == BLACK) {
 			if (node == node.parent.left) {
 				bro = node.parent.right;
@@ -229,11 +237,11 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	private void left_rotate(Node x) {
 		Node rch = x.right;
 		x.right = rch.left;
-		if (rch.left != null) {
+		if (rch.left != nil) {
 			rch.left.parent = x;
 		}
 		rch.parent = x.parent;
-		if (x.parent == null) {
+		if (x.parent == nil) {
 			root = rch;
 		}else if(x == x.parent.left) {
 			x.parent.left = rch;
@@ -250,11 +258,11 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	private void right_rotate(Node x) {
 		Node lch = x.left;
 		x.left = lch.right;
-		if (lch.right != null) {
+		if (lch.right != nil) {
 			lch.right.parent = x;
 		}
 		lch.parent = x.parent;
-		if (x.parent == null) {
+		if (x.parent == nil) {
 			root = lch;
 		}else if(x == x.parent.left) {
 			x.parent.left = lch;
@@ -268,7 +276,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 	}
 	
 	private void insert_fixup(Node n) {
-		Node uncle = null;
+		Node uncle = nil;
 		System.out.println("fixing up node" + n.key);
 		while (color(n.parent) == RED) {
 			if (n.parent == n.parent.parent.left) {
@@ -309,9 +317,15 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     public static void main(String[] args) { 
         RedBlackBST<String, Integer> st = new RedBlackBST<String, Integer>();
         In input = new In(args[0]);
+        LinkedList<String> strBuf = new LinkedList<String>();
         for (int i = 0; !input.isEmpty(); i++) {
             String key = input.readString();
+            strBuf.add(key);
             st.insert(key, i);
+        }
+        System.out.println("nil.size: " + st.nil.N);
+        for (String str : strBuf) {
+        	st.delete(str);
         }
 //        RedBlackBST<String, Integer>.Node n = st.getNode("H");
 //        st.left_rotate(n);
