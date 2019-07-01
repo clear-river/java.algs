@@ -327,6 +327,8 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
         for (String str : strBuf) {
         	st.delete(str);
         }
+        
+        //1st July, 2019. RBTree recovered.
 //        RedBlackBST<String, Integer>.Node n = st.getNode("H");
 //        st.left_rotate(n);
 //        st.right_rotate(st.root);
