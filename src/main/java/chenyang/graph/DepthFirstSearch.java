@@ -67,10 +67,12 @@ public class DepthFirstSearch {
 		for (int v = 0; v < G.V(); v++) {
 			if (dfs.hasPathTo(v)) {
 				StdOut.printf("%d to %d: ", s, v);
+				
 				Stack<Integer> path = dfs.pathTo(v);
+				StdOut.print(path.pop());
 				while(!path.isEmpty()) {
 					int x = path.pop();
-					StdOut.print((x == s)? x : "-" + x);
+					StdOut.print("-" + x);
 				}
 //				for (int x: dfs.pathTo(v)) {
 //					StdOut.print((x == s)? x : "-" + x);
