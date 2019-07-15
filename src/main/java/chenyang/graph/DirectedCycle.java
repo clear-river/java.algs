@@ -1,5 +1,7 @@
 package chenyang.graph;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 import chenyang.auxiliary.In;
@@ -11,12 +13,24 @@ public class DirectedCycle {
 	private boolean[] onStack;
 	private Stack<Integer> cycle;
 	
+	private Queue<Integer> pre;
+	private Queue<Integer> post;
+	private Stack<Integer> reversePost;
+	
 	private void dfs(Digraph G, int v) {
 		onStack[v] = true;
 		marked[v] = true;
+		
+		pre.add(v);
+		
 		for (int w: G.adj(v)) {
 			//If a cycle is found, stop dfs other vertices.
-			if (cycle != null) {return;}
+			if (cycle != null) {
+				//It's pointless to record these lists in case there're cycles.
+				pre = post = null;
+				reversePost = null;
+				return;
+			}
 			
 			if (!marked[w]) {
 				edgeTo[w] = v;
@@ -32,9 +46,16 @@ public class DirectedCycle {
 			}
 		}
 		onStack[v] = false;
+		
+		post.add(v);
+		reversePost.push(v);
 	}
 	
 	public DirectedCycle(Digraph G) {
+		pre = new LinkedList<Integer>();
+		post = new LinkedList<Integer>();
+		reversePost = new Stack<Integer>();
+		
 		marked = new boolean[G.V()];
 		onStack = new boolean[G.V()];
 		edgeTo = new int[G.V()];
@@ -52,6 +73,14 @@ public class DirectedCycle {
 	
 	public Iterable<Integer> cycle(){
 		return cycle;
+	}
+	
+	public boolean isDAG() {
+		return !hasCycle();
+	}
+	
+	public Iterable<Integer> topologicalOrder(){
+		return (isDAG())? reversePost : null;
 	}
 	
 	public static void main(String[] args) {
