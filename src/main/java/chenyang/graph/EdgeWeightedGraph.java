@@ -56,8 +56,10 @@ public class EdgeWeightedGraph {
 		for (int i = 0; i < this.v; i++) {
 			int selfLoops = 0;
 			for (Edge e : adj[i]) {
-				if (e.other(v) > v) { list.add(e); }
-				if (e.other(v) == v) {
+				if (e.other(i) > i) { 
+					list.add(e); 
+				}
+				if (e.other(i) == i) {
 					//2 Edges indicating the same self loop are consecutive
 					//due to implementation of func addEdge. Only add the first
 					//of them.
