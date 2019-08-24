@@ -17,6 +17,22 @@ public class DirectedCycle {
 	private Queue<Integer> post;
 	private Stack<Integer> reversePost;
 	
+	public DirectedCycle(Digraph G) {
+		pre = new LinkedList<Integer>();
+		post = new LinkedList<Integer>();
+		reversePost = new Stack<Integer>();
+		
+		marked = new boolean[G.V()];
+		onStack = new boolean[G.V()];
+		edgeTo = new int[G.V()];
+		for (int v = 0; v < G.V(); v++) {
+			
+			if (!marked[v] && cycle == null/*If a cycle is found, stop dfs other vertices.*/) {
+				dfs(G, v);
+			}
+		}
+	}
+	
 	private void dfs(Digraph G, int v) {
 		onStack[v] = true;
 		marked[v] = true;
@@ -49,22 +65,6 @@ public class DirectedCycle {
 		
 		post.add(v);
 		reversePost.push(v);
-	}
-	
-	public DirectedCycle(Digraph G) {
-		pre = new LinkedList<Integer>();
-		post = new LinkedList<Integer>();
-		reversePost = new Stack<Integer>();
-		
-		marked = new boolean[G.V()];
-		onStack = new boolean[G.V()];
-		edgeTo = new int[G.V()];
-		for (int v = 0; v < G.V(); v++) {
-			
-			if (!marked[v] && cycle == null/*If a cycle is found, stop dfs other vertices.*/) {
-				dfs(G, v);
-			}
-		}
 	}
 	
 	public boolean hasCycle() {

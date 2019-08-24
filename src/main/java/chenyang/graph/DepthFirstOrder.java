@@ -12,6 +12,7 @@ public class DepthFirstOrder {
 	//private Queue<Integer> preOrder;
 	private Deque<Integer> reversePostOrder;
 	
+	//for Digraph.
 	public DepthFirstOrder(Digraph g) {
 		marked = new boolean[g.V()];
 		//preOrder = new LinkedList<Integer>();
@@ -32,6 +33,25 @@ public class DepthFirstOrder {
 		}
 		reversePostOrder.addFirst(v);
 	}
+	
+	//for EdgeWeightedDigraph.
+    public DepthFirstOrder(EdgeWeightedDigraph G) {
+        marked    = new boolean[G.V()];
+        reversePostOrder = new LinkedList<Integer>();
+        for (int v = 0; v < G.V(); v++)
+            if (!marked[v]) depthFirstSearch(G, v);
+    }
+    
+    private void depthFirstSearch(EdgeWeightedDigraph G, int v) {
+        marked[v] = true;
+        for (DirectedEdge e : G.adj(v)) {
+            int w = e.to();
+            if (!marked[w]) {
+                depthFirstSearch(G, w);
+            }
+        }
+        reversePostOrder.addFirst(v);
+    }
 	
 	public Iterable<Integer> reversePost(){
 		return reversePostOrder;

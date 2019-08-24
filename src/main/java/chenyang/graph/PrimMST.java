@@ -156,11 +156,13 @@ public class PrimMST {
 	public static void main(String[] args) {
 		In in = new In(args[0]);
 		EdgeWeightedGraph G = new EdgeWeightedGraph(in);
+		StdOut.println(G);
+		StdOut.println();
 		PrimMST mst = new PrimMST(G);
 		for (Edge e : mst.edges()) {
 			StdOut.println(e);
 		}
-		StdOut.printf("%.5f\n", mst.weight());
+		StdOut.printf("%.2f\n", mst.weight());
 	}
 
 
